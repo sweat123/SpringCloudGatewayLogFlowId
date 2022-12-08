@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: gateway-test
+  cloud:
+    discovery:
+      enabled: true
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          filters:
+            - name: Hystrix
+              args:
+                name: serviceId
+                fallbackUri: "'forward:/fallback'"
+            - StripPrefix=1
+eureka:
+  client:
+    service-url:
+      defaultZone: 'http://localhost:8761/eureka/'
+server:
+  port: 9111
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000
+          strategy: SEMAPHORE
+          semaphare:
+            maxConcurrentRequests: 100
+      rollingStats:
+        timeInMilliseconds: 5000
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
